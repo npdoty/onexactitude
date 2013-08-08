@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
+	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.3"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+	<style type="text/css" media="screen">
+		#map {
+			height: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		html, body {
+			height: 100%;
+			padding: 0;
+			margin: 0;
+		}
+	</style>
+	<script type="text/javascript" charset="utf-8">
+		$(function() {
+			var map = L.map('map').setView([37, -122], 13);
+			var layer = new L.StamenTileLayer("terrain");
+			map.addLayer(layer);			
+		});
+	</script>
+</head>
+<body>
+	<div id="map"></div>
+</body>
