@@ -26,13 +26,34 @@
 			var y = lat2tile(lat, zoom);
 			return {x: x, y: y};
 		}
+		
+		function dpi() {	// a fine attempt, but still returns 96dpi for high-res but non-retina screens like mine
+			for (var i = 70; i < 400; i++) {
+				if (!window.matchMedia('(min-resolution: '+ i + 'dpi)').matches) {
+					return i-1;
+				}
+			}
+			return -1;	// browser doesn't support resolution in media queries (out-of-date webkit, e.g.)
+		}
 	
 		$(function() {
-			var map = L.map('map', {maxZoom: 30}).setView([37.87198, -122.25789], 30);
+			console.log('dpi based on matchMedia queries: ' + dpi());
+			
+			var latitude = 37;
+			var screenDpi = dpi() > -1 ? dpi() : 96;
+			var targetZoom = Math.log(screenDpi * 39.37 * 156543.034 * Math.cos(latitude * Math.PI / 180)) / Math.log(2);
+			
+			console.log('zoom: ' + targetZoom);
+			
+			var map = L.map('map', {maxZoom: 31, attributionControl: false}).setView([37.87198, -122.25789], targetZoom);
+			window.map = map;	// useful for debugging
 			var roadLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
 			var buildingLayer = L.geoJson().addTo(map);
 			var landLayer = L.geoJson().addTo(map);
 			landLayer.bringToBack();
+			
+			L.control.scale({metric: false}).addTo(map);
+			L.control.attribution({position: 'topright'}).addTo(map);
 			
 			var center = map.getCenter();
 			
