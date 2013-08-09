@@ -17,50 +17,62 @@
 		}
 	</style>
 	<script type="text/javascript" charset="utf-8">
+		// tile methods provided by: http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+		function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
+		function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
+
+		function xyForLatLngZoom(lat, lng, zoom) {
+			var x = long2tile(lng, zoom);
+			var y = lat2tile(lat, zoom);
+			return {x: x, y: y};
+		}
+	
 		$(function() {
-			window.map = L.map('map', {maxZoom: 30}).setView([37, -122], 18);
-			window.layer = new L.StamenTileLayer("terrain");
-			window.map.addLayer(window.layer);
-			window.layer.setOpacity(0.0);
+			var map = L.map('map', {maxZoom: 30}).setView([37.87198, -122.25789], 30);
+			var roadLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
+			var buildingLayer = L.geoJson().addTo(map);
+			var landLayer = L.geoJson().addTo(map);
+			landLayer.bringToBack();
 			
-			var jsonLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
+			var center = map.getCenter();
 			
-			window.layer.on('tileload', function(e) {
-				// load JSON tiles at appropriate zoom/tile locations courtesy of this gist:
-				//   https://gist.github.com/pkorac/5287314
-				var title = e.url.split("/");
-				var z = title[title.length-3];
-				var x = title[title.length-2];
-				var y = title[title.length-1].split(".")[0];
+			var vectorTileTemplates = [
+				{
+					template: "http://tile.openstreetmap.us/vectiles-highroad/", 
+					fetchZoom: 17, 
+					layer: roadLayer, 
+					style: {"color": "#ff0000"}
+				}, 
+				{
+					template: "http://tile.openstreetmap.us/vectiles-buildings/", 
+					fetchZoom: 18, 
+					layer: buildingLayer, 
+					style: {"color": "#0000ff"}
+				}, 
+				{
+					template: "http://tile.openstreetmap.us/vectiles-land-usages/", 
+					fetchZoom: 14, 
+					layer: landLayer, 
+					style: {"color": "#00ff00"}
+				}, 
+			];
+			
+			for (var i = 0; i < vectorTileTemplates.length; i++) {
+				var template = vectorTileTemplates[i];
+				var tile = xyForLatLngZoom(center.lat, center.lng, template.fetchZoom);
 				
-				var vectorTileTemplates = [
-				"http://tile.openstreetmap.us/vectiles-highroad/", 
-				"http://tile.openstreetmap.us/vectiles-buildings/",
-				"http://tile.openstreetmap.us/vectiles-land-usages/"
-				]
-				
-				for (var i = 0; i < vectorTileTemplates.length; i++) {
-					
-					var vectorString = vectorTileTemplates[i];
-					// Construct the json string out of the z, x and y
-					var jsonString = vectorString + z + "/" + x + "/" + y + ".json";
+				// Construct the json string out of the z, x and y
+				var jsonString = template.template + template.fetchZoom + "/" + tile.x + "/" + tile.y + ".json";
+				(function(template) { 
 					$.getJSON( jsonString, function(json){
-					// if there is json data, it will be loaded, otherwise we just get nothing
-					// Add this data to the jsonLayer
-						jsonLayer.addData(json);
+						template.layer.addData(json);	// add the json data
+						template.layer.setStyle(template.style);	// and style based on the appropriate template
 					} );
-					
-				}
-			});
-			
-			window.map.on("zoomend", function(e){
-				var zoomLevel = e.target.getZoom();
-				if (zoomLevel < 18) {
-					jsonLayer.clearLayers();	// remove GeoJSON from other zoom layer when requesting new data
-				}
-			});
+				}(template));	// curry to capture template for the current iteration
+			}
 		});
 	</script>
+	<title>On Exactitude in Science</title>
 </head>
 <body>
 	<div id="map"></div>
