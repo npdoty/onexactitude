@@ -18,9 +18,32 @@
 	</style>
 	<script type="text/javascript" charset="utf-8">
 		$(function() {
-			var map = L.map('map').setView([37, -122], 13);
+			window.map = L.map('map').setView([37, -122], 13);
 			var layer = new L.StamenTileLayer("terrain");
-			map.addLayer(layer);			
+			window.map.addLayer(layer);			
+			
+			var jsonLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
+			
+			layer.on('tileload', function(e) {
+				// load JSON tiles at appropriate zoom/tile locations courtesy of this gist:
+				//   https://gist.github.com/pkorac/5287314
+				var title = e.url.split("/");
+				var z = title[title.length-3];
+				var x = title[title.length-2];
+				var y = title[title.length-1].split(".")[0];
+				
+				// Construct the json string out of the z, x and y
+				var jsonString = "http://tile.openstreetmap.us/vectiles-highroad/" + z + "/" + x + "/" + y + ".json";
+				$.getJSON( jsonString, function(json){
+				// if there is json data, it will be loaded, otherwise we just get nothing
+				// Add this data to the jsonLayer
+					jsonLayer.addData(json);
+				} );
+			});
+			
+			window.map.on("zoomend", function(){
+				jsonLayer.clearLayers();	// remove GeoJSON from other zoom layer when requesting new data
+			});
 		});
 	</script>
 </head>
