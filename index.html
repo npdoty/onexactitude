@@ -9,6 +9,17 @@
 			height: 100%;
 			padding: 0;
 			margin: 0;
+			z-index: 10;
+			opacity: 0.8;
+		}
+		#base {
+			position: absolute;
+			top: 0;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+			z-index: 0;
 		}
 		html, body {
 			height: 100%;
@@ -39,13 +50,14 @@
 		$(function() {
 			console.log('dpi based on matchMedia queries: ' + dpi());
 			
-			var latitude = 37;
+			var startingCenter = [37.87198, -122.25789];
+			var latitude = startingCenter[0];
 			var screenDpi = dpi() > -1 ? dpi() : 96;
 			var targetZoom = Math.log(screenDpi * 39.37 * 156543.034 * Math.cos(latitude * Math.PI / 180)) / Math.log(2);
 			
 			console.log('zoom: ' + targetZoom);
 			
-			var map = L.map('map', {maxZoom: 31, attributionControl: false}).setView([37.87198, -122.25789], targetZoom);
+			var map = L.map('map', {maxZoom: 31, attributionControl: false}).setView(startingCenter, targetZoom);
 			window.map = map;	// useful for debugging
 			var roadLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
 			var buildingLayer = L.geoJson().addTo(map);
@@ -54,6 +66,10 @@
 			
 			L.control.scale({metric: false}).addTo(map);
 			L.control.attribution({position: 'topright'}).addTo(map);
+			
+			var basemap = L.map('base', {attributionControl: false}).setView(startingCenter, 16);
+			var layer = new L.StamenTileLayer("terrain");
+			basemap.addLayer(layer);
 			
 			var center = map.getCenter();
 			
@@ -97,4 +113,5 @@
 </head>
 <body>
 	<div id="map"></div>
+	<div id="base"></div>
 </body>
