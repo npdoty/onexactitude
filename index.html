@@ -67,9 +67,14 @@
 			L.control.scale({metric: false}).addTo(map);
 			L.control.attribution({position: 'topright'}).addTo(map);
 			
-			var basemap = L.map('base', {attributionControl: false}).setView(startingCenter, 16);
+			var basemap = L.map('base', {attributionControl: false}).setView(startingCenter, 18);
 			var layer = new L.StamenTileLayer("terrain");
 			basemap.addLayer(layer);
+			
+			map.on('moveend', function(e) {		// move the basemap when the user drags the top map
+				newCenter = e.target.getCenter();
+				basemap.panTo(newCenter);
+			});
 			
 			var center = map.getCenter();
 			
