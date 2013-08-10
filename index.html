@@ -57,7 +57,15 @@
 			
 			console.log('zoom: ' + targetZoom);
 			
-			var map = L.map('map', {maxZoom: 31, attributionControl: false}).setView(startingCenter, targetZoom);
+			var map = L.map('map', {
+				maxZoom: 31, 
+				attributionControl: false, 
+				zoomControl: false, 
+				scrollWheelZoom: false, 
+				doubleClickZoom: false, 
+				boxZoom: false, 
+				keyboardZoomOffset: 0
+			}).setView(startingCenter, targetZoom);
 			window.map = map;	// useful for debugging
 			var roadLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
 			var buildingLayer = L.geoJson().addTo(map);
