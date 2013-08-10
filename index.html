@@ -10,7 +10,7 @@
 			padding: 0;
 			margin: 0;
 			z-index: 10;
-			opacity: 0.8;
+			opacity: 0.7;
 		}
 		#base {
 			position: absolute;
@@ -50,7 +50,7 @@
 		$(function() {
 			console.log('dpi based on matchMedia queries: ' + dpi());
 			
-			var startingCenter = [37.87198, -122.25789];
+			var startingCenter = [37.87139, -122.258285];
 			var latitude = startingCenter[0];
 			var screenDpi = dpi() > -1 ? dpi() : 96;
 			var targetZoom = Math.log(screenDpi * 39.37 * 156543.034 * Math.cos(latitude * Math.PI / 180)) / Math.log(2);
@@ -75,13 +75,39 @@
 			L.control.scale({metric: false}).addTo(map);
 			L.control.attribution({position: 'topright'}).addTo(map);
 			
-			var basemap = L.map('base', {attributionControl: false}).setView(startingCenter, 18);
+			var basemap = L.map('base', {attributionControl: false, zoomControl: false}).setView(startingCenter, 18);
 			var layer = new L.StamenTileLayer("terrain");
 			basemap.addLayer(layer);
+
+			var bounds = map.getBounds();
+			var boundsPadding = 20;
+			var innerPadding = 5;
+			var rectangle = L.rectangle(bounds.pad(boundsPadding), {color: "#000088", weight: 3, fill: true, opacity: 1, fillOpacity: 0.2}).addTo(basemap);
+			var innerRectangle = L.rectangle(bounds.pad(innerPadding), {color: "#000", weight: 1, opacity: 1, fill: false}).addTo(basemap);
+			
+			function translateBoundsFromMapToMap(bounds, basemap, map) {
+				var sw = bounds.getSouthWest();
+				var ne = bounds.getNorthEast();
+				sw = basemap.latLngToLayerPoint(sw);
+				sw = map.layerPointToLatLng(sw);
+				ne = basemap.latLngToLayerPoint(ne);
+				ne = map.layerPointToLatLng(ne);
+				var newBounds = L.latLngBounds(sw, ne);
+				return newBounds;
+			}
+			
+			// var topMapBounds = translateBoundsFromMapToMap(bounds.pad(boundsPadding), basemap, map);
+			// var topRectangle = L.rectangle(topMapBounds).addTo(map);
 			
 			map.on('moveend', function(e) {		// move the basemap when the user drags the top map
-				newCenter = e.target.getCenter();
+				var newCenter = e.target.getCenter();
 				basemap.panTo(newCenter);
+				
+				var newBounds = e.target.getBounds();
+				rectangle.setBounds(newBounds.pad(boundsPadding));
+				innerRectangle.setBounds(newBounds.pad(innerPadding));
+				// var newTopMapBounds = translateBoundsFromMapToMap(newBounds.pad(boundsPadding), basemap, map);
+				// topRectangle.setBounds(newTopMapBounds);
 			});
 			
 			var center = map.getCenter();
@@ -91,7 +117,7 @@
 					template: "http://tile.openstreetmap.us/vectiles-highroad/", 
 					fetchZoom: 17, 
 					layer: roadLayer, 
-					style: {"color": "#ff0000"}
+					style: {"color": "#ff0000", "opacity": 1, weight: 70}
 				}, 
 				{
 					template: "http://tile.openstreetmap.us/vectiles-buildings/", 
@@ -103,7 +129,7 @@
 					template: "http://tile.openstreetmap.us/vectiles-land-usages/", 
 					fetchZoom: 14, 
 					layer: landLayer, 
-					style: {"color": "#00ff00"}
+					style: {"color": "#00ff00", "fillOpacity": 0.02}
 				}, 
 			];
 			
