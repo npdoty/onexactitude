@@ -73,7 +73,8 @@
 			landLayer.bringToBack();
 			
 			L.control.scale({metric: false}).addTo(map);
-			L.control.attribution({position: 'topright'}).addTo(map);
+			var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
+			attribution.addAttribution('Base map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
 			
 			var basemap = L.map('base', {attributionControl: false, zoomControl: false}).setView(startingCenter, 18);
 			var layer = new L.StamenTileLayer("terrain");
