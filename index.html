@@ -67,10 +67,22 @@
 				keyboardZoomOffset: 0
 			}).setView(startingCenter, targetZoom);
 			window.map = map;	// useful for debugging
-			var roadLayer = L.geoJson().addTo(map);	// empty GeoJSON layer to start with
-			var buildingLayer = L.geoJson().addTo(map);
-			var landLayer = L.geoJson().addTo(map);
-			landLayer.bringToBack();
+			var buildingLayer = L.geoJson(null, {
+				onEachFeature: function(feature, layer){
+				}
+			}).addTo(map);
+			var landLayer = L.geoJson(null, {
+				onEachFeature: function(feature, layer){
+					var message = feature.properties.name ? feature.properties.name + ', ' : '';
+					message = message + 'a ' + feature.properties.kind;
+					layer.bindPopup(message);
+				}
+			}).addTo(map);
+			var roadLayer = L.geoJson(null, {
+				onEachFeature: function(feature, layer){
+					layer.bindPopup('An unnamed ' + feature.properties.kind + '.');
+				}
+			}).addTo(map);
 			
 			L.control.scale({metric: false}).addTo(map);
 			var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
@@ -144,6 +156,7 @@
 					$.getJSON( jsonString, function(json){
 						template.layer.addData(json);	// add the json data
 						template.layer.setStyle(template.style);	// and style based on the appropriate template
+						landLayer.bringToBack();
 					} );
 				}(template));	// curry to capture template for the current iteration
 			}
