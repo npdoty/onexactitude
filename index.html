@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <head>
+	<meta charset='utf-8'>
 	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.3"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" />
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" >
+	<link href='http://fonts.googleapis.com/css?family=IM+Fell+Double+Pica:400,400italic|Cardo:400,400italic' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
 		#map {
 			height: 100%;
 			padding: 0;
 			margin: 0;
 			z-index: 10;
-			opacity: 0.7;
+			opacity: 0.8;
 		}
 		#base {
 			position: absolute;
@@ -25,6 +27,22 @@
 			height: 100%;
 			padding: 0;
 			margin: 0;
+		}
+		
+		#text {
+			z-index: 99 !important;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			background: rgba(235, 235, 235, 0.8);
+		}
+		#text p {
+			padding: 0px 20px;
+			font-family: 'Cardo', serif;
+			font-style: italic;
+		}
+		span.title {
+			font-style: normal;
 		}
 	</style>
 	<script type="text/javascript" charset="utf-8">
@@ -84,9 +102,13 @@
 				}
 			}).addTo(map);
 			
-			L.control.scale({metric: false}).addTo(map);
 			var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
-			attribution.addAttribution('Base map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
+			attribution.addAttribution('"On Exactitude in Science" by Jorge Luis Borges');
+			attribution.addAttribution('English translation by Andrew Hurley');
+			attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
+			attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
+			L.control.scale({metric: false, position: 'topleft'}).addTo(map);
+			
 			
 			var basemap = L.map('base', {attributionControl: false, zoomControl: false}).setView(startingCenter, 18);
 			var layer = new L.StamenTileLayer("terrain");
@@ -130,7 +152,7 @@
 					template: "http://tile.openstreetmap.us/vectiles-highroad/", 
 					fetchZoom: 17, 
 					layer: roadLayer, 
-					style: {"color": "#ff0000", "opacity": 1, weight: 70}
+					style: {"color": "#ff0000", "opacity": 1, weight: 500}
 				}, 
 				{
 					template: "http://tile.openstreetmap.us/vectiles-buildings/", 
@@ -142,7 +164,7 @@
 					template: "http://tile.openstreetmap.us/vectiles-land-usages/", 
 					fetchZoom: 14, 
 					layer: landLayer, 
-					style: {"color": "#00ff00", "fillOpacity": 0.02}
+					style: {"color": "#00ff00", "fillOpacity": 0.1}
 				}, 
 			];
 			
@@ -165,6 +187,12 @@
 	<title>On Exactitude in Science</title>
 </head>
 <body>
-	<div id="map"></div>
 	<div id="base"></div>
+	<div id="map"></div>
+	<div id="text">
+		<p>In that Empire, the Art of Cartography attained such Perfection that the map of a single Province occupied the entirety of a City, and the map of the Empire, the entirety of a Province. In time, those Unconscionable Maps no longer satisfied, and the Cartographers Guilds struck a Map of the Empire whose size was that of the Empire, and which coincided point for point with it. The following Generations, who were not so fond of the Study of Cartography as their Forebears had been, saw that that vast Map was Useless, and not without some Pitilessness was it, that they delivered it up to the Inclemencies of Sun and Winters. In the Deserts of the West, still today, there are Tattered Ruins of that Map, inhabited by Animals and Beggars; in all the Land there is no other Relic of the Disciplines of Geography.</p>
+		<p style="text-align: right; margin-top: -20px;">
+			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
+		</p>
+	</div>
 </body>
