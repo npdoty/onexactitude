@@ -4,8 +4,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.3"></script>
+	<script src="L.Control.pan.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" >
+	<link rel="stylesheet" href="L.Control.Pan.css" type="text/css" media="screen,all,braille,embossed,handheld,print,projection,speech,tty,tv|" charset="utf-8">
 	<link href='http://fonts.googleapis.com/css?family=IM+Fell+Double+Pica:400,400italic|Cardo:400,400italic' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
 		#map {
@@ -146,7 +148,8 @@
 					scrollWheelZoom: false, 
 					doubleClickZoom: false, 
 					boxZoom: false, 
-					keyboardZoomOffset: 0
+					keyboardZoomOffset: 0,
+					panControl: false
 				}).setView(startingCenter, targetZoom);
 				window.map = map;	// useful for debugging
 				var buildingLayer = L.geoJson(null, {
@@ -172,6 +175,7 @@
 				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
 				attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
 				L.control.scale({metric: false, position: 'topleft'}).addTo(map);
+				L.control.pan().addTo(map);
 
 				var basemap = L.map('base', {attributionControl: false, zoomControl: false}).setView(startingCenter, 18);
 				var layer = new L.StamenTileLayer("terrain");
