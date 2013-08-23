@@ -175,7 +175,7 @@
 				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
 				attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
 				L.control.scale({metric: false, position: 'topleft'}).addTo(map);
-				L.control.pan().addTo(map);
+				L.control.pan({panOffset: window.screen.width}).addTo(map);
 
 				var basemap = L.map('base', {attributionControl: false, zoomControl: false}).setView(startingCenter, 18);
 				var layer = new L.StamenTileLayer("terrain");
