@@ -35,6 +35,9 @@
 	   = 52 + 19 + 10 = 81
 	   */
 	height: 81px;
+	
+	margin-top: 70px !important; /* onexactitude-specific: prevent clashing with other controls, also top-aligned */
+	margin-right: 40px !important;
 }
 
 .leaflet-control-pan > div {
