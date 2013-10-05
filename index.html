@@ -84,6 +84,8 @@
 			return {x: x, y: y};
 		}
 		
+		window.visibleControls = true;
+		
 		function dpi() {	// a fine attempt, but still returns 96dpi for high-res but non-retina screens like mine
 			for (var i = 70; i < 400; i++) {
 				if (!window.matchMedia('(min-resolution: '+ i + 'dpi)').matches) {
@@ -174,8 +176,9 @@
 				attribution.addAttribution('English translation by Andrew Hurley');
 				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
 				attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
-				L.control.scale({metric: false, position: 'topleft'}).addTo(map);
-				L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
+				var scale = L.control.scale({metric: false, position: 'topleft'}).addTo(map);
+				var pan = L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
+				window.controls = [attribution, scale, pan];
 
 				var basemap = L.map('base', {
 					attributionControl: false, 
@@ -259,6 +262,26 @@
 				}
 			} // end displayMaps()
 			
+			// if the user presses "h", toggle all the controls on the screen
+			$(document).keypress(function(event){
+				if (event.which == 104) {
+					if (visibleControls) {
+						$('#text').addClass('hidden');
+					} else {
+						$('#text').removeClass('hidden');
+					}
+					
+					for (var i = 0; i < controls.length; i++) {
+						if (visibleControls) {
+							controls[i].removeFrom(map);
+						} else {
+							controls[i].addTo(map);
+						}
+					}
+					
+					window.visibleControls = !window.visibleControls;
+				}
+			});
 		});
 	</script>
 	<title>On Exactitude in Science</title>
