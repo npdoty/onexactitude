@@ -5,6 +5,8 @@
 	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
 	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.3"></script>
 	<script src="L.Control.pan.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/javascript.util.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jsts.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" >
 	<link rel="stylesheet" href="L.Control.Pan.css" type="text/css" media="screen,all,braille,embossed,handheld,print,projection,speech,tty,tv|" charset="utf-8">
@@ -94,6 +96,16 @@
 			}
 			return -1;	// browser doesn't support resolution in media queries (out-of-date webkit, e.g.)
 		}
+		
+		function metersPerPixelAtLatitudeAndZoom(latitude, zoom) {
+		  var circumference = 40075040; // in meters
+		  
+		  return circumference * Math.cos(latitude) / Math.pow(2, zoom + 8);
+		  
+		  // S=C*cos(y)/2^(z+8) // from http://wiki.openstreetmap.org/wiki/Zoom_levels
+		}
+		
+		metersPerDegree = 111111;  // this hard-coded number is not a joke, apparently it's a good approximation
 	
 		$(function() {
 			var dpiGuess = dpi();
@@ -230,7 +242,16 @@
 						template: "http://tile.openstreetmap.us/vectiles-highroad/", 
 						fetchZoom: 17, 
 						layer: roadLayer, 
-						style: {"color": "#ff0000", "opacity": 1, weight: 500}
+						style: {"color": "#ff0000", "opacity": 0.3, "fillOpacity": 0.3}, //weight: 1 / metersPerPixelAtLatitudeAndZoom(center.lat, targetZoom)}
+						bufferForItem: function(feature) {
+						  var widths = {
+						    'path' : 1,
+						    'minor_road' : 3,
+						    'major_road' : 5
+						  }
+						  
+						  return widths[feature['properties']['kind']] || 2;
+						}
 					}, 
 					{
 						template: "http://tile.openstreetmap.us/vectiles-buildings/", 
@@ -245,7 +266,7 @@
 						style: {"color": "#00ff00", "fillOpacity": 0.1}
 					}, 
 				];
-
+				
 				for (var i = 0; i < vectorTileTemplates.length; i++) {
 					var template = vectorTileTemplates[i];
 					var tile = xyForLatLngZoom(center.lat, center.lng, template.fetchZoom);
@@ -254,6 +275,17 @@
 					var jsonString = template.template + template.fetchZoom + "/" + tile.x + "/" + tile.y + ".json";
 					(function(template) { 
 						$.getJSON( jsonString, function(json){
+						  if (template.layer == roadLayer) {  // for roads, buffer the lines into polygons, using jsts
+						    var reader = new jsts.io.GeoJSONReader();
+						    var writer = new jsts.io.GeoJSONWriter();
+						    for (var j = 0; j < json['features'].length; j++) {
+						      var geom = reader.read(json['features'][j]['geometry']);
+						      var buffered = geom.buffer(template.bufferForItem(json['features'][j]) / 2 / metersPerDegree, null, 2);
+						      json['features'][j]['geometry'] = writer.write(buffered);
+						    }
+						    console.log('buffered road features');
+						  }
+						  
 							template.layer.addData(json);	// add the json data
 							template.layer.setStyle(template.style);	// and style based on the appropriate template
 							landLayer.bringToBack();
