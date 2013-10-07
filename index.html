@@ -283,7 +283,6 @@
 						      var buffered = geom.buffer(template.bufferForItem(json['features'][j]) / 2 / metersPerDegree, null, 2);
 						      json['features'][j]['geometry'] = writer.write(buffered);
 						    }
-						    console.log('buffered road features');
 						  }
 						  
 							template.layer.addData(json);	// add the json data
