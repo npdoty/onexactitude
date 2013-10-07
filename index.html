@@ -34,7 +34,7 @@
 			padding: 0;
 			margin: 0;
 			font-family: 'Cardo', serif;
-			overflow: hidden;
+			#overflow: hidden;
 		}
 		
 		#text {
@@ -62,17 +62,23 @@
 		#instructions {
 			width: 60%;
 			max-width: 700px;
-			height: 40%;
 			margin: auto;
+			top: 0; left: 0; right: 0;
 			position: absolute;
-			top: 0; bottom: 0; left: 0; right: 0;
-			font-size: 200%;
+			font-size: 150%;
 			z-index: 100 !important;
+			height: auto;
 		}
 		
 		#instructions p {
 			background-color: white;
 			padding: 20px;
+			text-align: justify;
+			font-style: italic;
+		}
+		
+		#instructions p.explore {
+		  font-style: normal;
 		}
 	</style>
 	<script type="text/javascript" charset="utf-8">
@@ -110,7 +116,7 @@
 		$(function() {
 			var dpiGuess = dpi();
 			console.log('dpi based on matchMedia queries: ' + dpiGuess);
-			var startingCenter = [37.87139, -122.258285];
+			var startingCenter = [37.87139, -122.258295];
 			
 			if (navigator.geolocation) {
 				$('#currentLocation').click(function(event) {
@@ -146,8 +152,6 @@
 				$('#instructions').hide();
 			}
 
-			//displayMaps(dpiGuess, startingCenter);
-			
 			function displayMaps(dpiGuess, startingCenter){
 				var latitude = startingCenter[0];
 				var screenDpi = dpiGuess > -1 ? dpiGuess : 96;
@@ -188,7 +192,7 @@
 				attribution.addAttribution('English translation by Andrew Hurley');
 				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
 				attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
-				var scale = L.control.scale({metric: false, position: 'topleft'}).addTo(map);
+				var scale = L.control.scale({metric: false, position: 'bottomleft'}).addTo(map);
 				var pan = L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
 				window.controls = [attribution, scale, pan];
 
@@ -242,7 +246,7 @@
 						template: "http://tile.openstreetmap.us/vectiles-highroad/", 
 						fetchZoom: 17, 
 						layer: roadLayer, 
-						style: {"color": "#ff0000", "opacity": 0.3, "fillOpacity": 0.3}, //weight: 1 / metersPerPixelAtLatitudeAndZoom(center.lat, targetZoom)}
+						style: {"color": "#ff0000", "opacity": 0.3, "fillOpacity": 0.3},
 						bufferForItem: function(feature) {
 						  var widths = {
 						    'path' : 1,
@@ -291,17 +295,17 @@
 						} );
 					}(template));	// curry to capture template for the current iteration
 				}
+				
+				window.setTimeout(fadeOutBase, 10000);
 			} // end displayMaps()
+			
+			function fadeOutBase() {
+			  $('#base').fadeOut(1000);
+			}
 			
 			// if the user presses "h", toggle all the controls on the screen
 			$(document).keypress(function(event){
 				if (event.which == 104) {
-					if (visibleControls) {
-						$('#text').addClass('hidden');
-					} else {
-						$('#text').removeClass('hidden');
-					}
-					
 					for (var i = 0; i < controls.length; i++) {
 						if (visibleControls) {
 							controls[i].removeFrom(map);
@@ -311,6 +315,8 @@
 					}
 					
 					window.visibleControls = !window.visibleControls;
+				} else if (event.which == 98) {
+				  $('#base').fadeToggle(1000);
 				}
 			});
 		});
@@ -318,15 +324,13 @@
 	<title>On Exactitude in Science</title>
 </head>
 <body>
-	<div id="text">
-		<p>In that Empire, the Art of Cartography attained such Perfection that the map of a single Province occupied the entirety of a City, and the map of the Empire, the entirety of a Province. In time, those Unconscionable Maps no longer satisfied, and the Cartographers Guilds struck a Map of the Empire whose size was that of the Empire, and which coincided point for point with it. The following Generations, who were not so fond of the Study of Cartography as their Forebears had been, saw that that vast Map was Useless, and not without some Pitilessness was it, that they delivered it up to the Inclemencies of Sun and Winters. In the Deserts of the West, still today, there are Tattered Ruins of that Map, inhabited by Animals and Beggars; in all the Land there is no other Relic of the Disciplines of Geography.</p>
-		<p style="text-align: right; margin-top: -20px;">
-			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
-		</p>
-	</div>
 	<div id="base"></div>
 	<div id="map"></div>
 	<div id="instructions">
-		<p>Explore the tattered ruins of that map in your <a href="#" id="currentLocation">current location</a>, or start <a href="#" id="berkeleyLocation">in Berkeley</a>.</p>
+	  <p>In that Empire, the Art of Cartography attained such Perfection that the map of a single Province occupied the entirety of a City, and the map of the Empire, the entirety of a Province. In time, those Unconscionable Maps no longer satisfied, and the Cartographers Guilds struck a Map of the Empire whose size was that of the Empire, and which coincided point for point with it. The following Generations, who were not so fond of the Study of Cartography as their Forebears had been, saw that that vast Map was Useless, and not without some Pitilessness was it, that they delivered it up to the Inclemencies of Sun and Winters. In the Deserts of the West, still today, there are Tattered Ruins of that Map, inhabited by Animals and Beggars; in all the Land there is no other Relic of the Disciplines of Geography.</p>
+		<p style="text-align: right; margin-top: -20px;">
+			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
+		</p>
+		<p class="explore">Explore the tattered ruins of that map in your <a href="#" id="currentLocation">current location</a>, or start <a href="#" id="berkeleyLocation">in Berkeley</a>.</p>
 	</div>
 </body>
