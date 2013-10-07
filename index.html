@@ -34,7 +34,11 @@
 			padding: 0;
 			margin: 0;
 			font-family: 'Cardo', serif;
-			#overflow: hidden;
+		}
+		
+		body.with-image {
+		  background-image: url("new_and_accurate_medium.jpeg");
+			background-size: cover;
 		}
 		
 		#text {
@@ -68,10 +72,10 @@
 			font-size: 150%;
 			z-index: 100 !important;
 			height: auto;
+			background-color: white;
 		}
 		
 		#instructions p {
-			background-color: white;
 			padding: 20px;
 			text-align: justify;
 			font-style: italic;
@@ -80,6 +84,15 @@
 		#instructions p.explore {
 		  font-style: normal;
 		}
+		
+		#instructions p.credits {
+		  font-size: 50%;
+		  text-align: right;
+		  margin-top: -20px;
+		  padding-bottom: 10px;
+		  margin-bottom: 0px;
+		}
+		
 	</style>
 	<script type="text/javascript" charset="utf-8">
 		// tile methods provided by: http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
@@ -150,6 +163,7 @@
 			function transitionToMaps(startingCenter) {
 				displayMaps(dpiGuess, startingCenter);
 				$('#instructions').hide();
+				$('body').removeClass('with-image');
 			}
 
 			function displayMaps(dpiGuess, startingCenter){
@@ -191,7 +205,7 @@
 				attribution.addAttribution('Prose by Jorge Luis Borges');
 				attribution.addAttribution('English translation by Andrew Hurley');
 				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
-				attribution.addAttribution('Map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
+				attribution.addAttribution('map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
 				var scale = L.control.scale({metric: false, position: 'bottomleft'}).addTo(map);
 				var pan = L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
 				window.controls = [attribution, scale, pan];
@@ -323,7 +337,7 @@
 	</script>
 	<title>On Exactitude in Science</title>
 </head>
-<body>
+<body class="with-image">
 	<div id="base"></div>
 	<div id="map"></div>
 	<div id="instructions">
@@ -332,5 +346,6 @@
 			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
 		</p>
 		<p class="explore">Explore the tattered ruins of that map in your <a href="#" id="currentLocation">current location</a>, or start <a href="#" id="berkeleyLocation">in Berkeley</a>.</p>
+		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library.</p>
 	</div>
 </body>
