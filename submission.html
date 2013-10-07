@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<head>
+	<meta charset='utf-8'>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<link href='http://fonts.googleapis.com/css?family=IM+Fell+Double+Pica:400,400italic|Cardo:400,400italic' rel='stylesheet' type='text/css'>
+	<style type="text/css" media="screen">
+		#map {
+			height: 100%;
+			padding: 0;
+			margin: 0;
+			z-index: 10;
+			opacity: 0.8;
+		}
+		#base {
+			position: absolute;
+			top: 0;
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+			z-index: 0;
+		}
+		html, body {
+			height: 100%;
+			width: 100%;
+			padding: 0;
+			margin: 0;
+			font-family: 'Cardo', serif;
+		}
+		
+		body.with-image {
+		  background-image: url("new_and_accurate_medium.jpeg");
+			background-size: cover;
+		}
+		
+		#text {
+			z-index: 99 !important;
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			background: rgba(235, 235, 235, 0.8);
+			cursor: pointer;
+		}
+		
+		#text.hidden {
+			bottom: auto;
+			top: 95%;
+		}
+		
+		#text p {
+			padding: 0px 20px;
+			font-style: italic;
+		}
+		span.title {
+			font-style: normal;
+		}
+		
+		#instructions {
+			width: 60%;
+			max-width: 700px;
+			margin: auto;
+			top: 0; left: 0; right: 0; bottom: 0;
+			position: absolute;
+			font-size: 120%;
+			z-index: 100 !important;
+			height: auto;
+			background-color: white;
+		}
+		
+		#instructions p {
+			padding: 0px 20px;
+			text-align: justify;
+		}
+		
+		#instructions p.explore {
+		  font-style: normal;
+		}
+		
+		#instructions p.credits {
+		  font-size: 50%;
+		  text-align: right;
+		  margin-top: 20px;
+		  padding-bottom: 10px;
+		  margin-bottom: 0px;
+		}
+		
+		#help {
+		  background-color: black;
+		  color: white;
+		  opacity: 0.8;
+		  position: fixed;
+		  bottom: 0; right: 0;
+		  z-index: 99 !important;
+		  padding: 20px;
+		}
+	</style>
+	<title>On Exactitude in Science: See-Through Maps</title>
+</head>
+<body class="with-image">
+	<div id="instructions">
+	  <p>
+	    <a href="index.html">This map</a> is an illustration, a <a href="http://webadaptation.org">Web adaptation</a>, of a very short story written by Jorge Luis Borges: "On Exactitude in Science" ("Del rigor en la ciencia").
+	  </p>
+	  <p>
+	    <strong>How to</strong>: Click to see a map of your device's approximate current location or start on the UC Berkeley campus. Pan around the map a bit by dragging with your mouse, and click on an area to find out just a little about it. The pan arrows in the top right corner will let you pan more quickly &mdash; how long would it take to reach the next path or a major road? If disoriented, press <em>b</em> to toggle a wider view; to see without distraction, press <em>h</em> to hide on-screen controls. A scale at the bottom of the screen shows you how long one foot is. You cannot zoom in or out.
+	  </p>
+	  <p>
+	    [as the story says, it's absurd. that's the point.]
+	  </p>
+	  <p>
+	    Technically, though, it's a fun experiment. Digital mapping makes rendering of maps of anywhere in the world at various scales feasible on most Internet-connected devices, but providing a perfect 1:1 scale is difficult, requiring determining the exact screen resolution (the "dots per inch", not just the screen size) which browsers don't regularly provide and rendering the image on the client itself, as the scale varies based on the user's location and the device's screen. This map is in part an experiment with the new and growing availability of "vector tiles" &mdash; subsets of the geography and features of a particular area represented in machine-readable form (GeoJSON, in this case) that are converted into appropriate lines and shapes by code (in this case, JavaScript) in the user's client, the browser. Data is provided by <a href="http://www.openstreetmap.org/">OpenStreetMap</a>, a free, collaboratively developed and edited source of map data; vector tiles are generated <a href="http://openstreetmap.us/~migurski/vector-datasource/">courtesy of Mike Migurski</a>; more traditional raster tiles (Stamen Design's <a href="http://maps.stamen.com/#terrain">Terrain</a>) are used to orient the viewer.
+	  </p>
+	  <p>
+	    This adaptation of the Borges story was developed by <a href="http://npdoty.name">Nick Doty</a>, PhD student at the <a href="http://ischool.berkeley.edu">UC Berkeley School of Information</a>.
+	  </p>
+		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library.<br><a href="submission.html">Submitted</a> to the <a href="http://globalurbanhumanities.berkeley.edu/">Global Urban Humanities Initiative</a>, UC Berkeley, <a href="http://ced.berkeley.edu/events-media/events/mapping-and-its-discontents">Mapping and Its Discontents Symposium</a>, November 2013.</p>
+	</div>
+</body>
