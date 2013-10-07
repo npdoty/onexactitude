@@ -8,6 +8,7 @@
 	<script src="lib/javascript.util.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jsts.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="lib/jquery.ba-bbq.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" >
 	<link rel="stylesheet" href="L.Control.Pan.css" type="text/css" media="screen,all,braille,embossed,handheld,print,projection,speech,tty,tv|" charset="utf-8">
 	<link href='http://fonts.googleapis.com/css?family=IM+Fell+Double+Pica:400,400italic|Cardo:400,400italic' rel='stylesheet' type='text/css'>
@@ -115,6 +116,7 @@
 		}
 		
 		window.visibleControls = true;
+		window.mapsCreated = false;
 		
 		function dpi() {	// a fine attempt, but still returns 96dpi for high-res but non-retina screens like mine
 			for (var i = 70; i < 400; i++) {
@@ -141,35 +143,52 @@
 			var startingCenter = [37.87139, -122.258295];
 			
 			if (navigator.geolocation) {
-				$('#currentLocation').click(function(event) {
-					navigator.geolocation.getCurrentPosition(
-						function(position) {
-							transitionToMaps([position.coords.latitude, position.coords.longitude]);
-						}, 
-						function(error){
-							console.log("Geolocation Error: " + error.code + ": " + error.message);
-							$('#instructions p').text("There was an error in getting your current location, so let's start in Berkeley...");
-							window.setTimeout(transitionToMaps, 700, startingCenter);
-						}
-					);
-				
-					return false;
-				});
+			  // TODO: change intro text if geolocation isn't available
 			} else {
 				transitionToMaps(startingCenter);	// geolocation not supported, so just use the default
 			}
 			
-			$('#berkeleyLocation').click(function(event) {
-				transitionToMaps(startingCenter);
-				return false;
+			$('a [href^=#]').click(function(event) {
+			 var href = $(this).attr("href");
+			 $.bbq.pushState({url: href});
+			 return false;
 			});
 			
-			$('#text, #text *').click(function(event) {
-				$('#text').toggleClass('hidden');
-				return false;
+			$(window).bind("hashchange", function(e) {
+			  var fragment = $.param.fragment();
+			  console.log(fragment);
+			  
+			  switch (fragment) {
+			    case "Berkeley":
+			      transitionToMaps(startingCenter);
+			      break;
+			    case "Current":
+			      if (navigator.geolocation) {
+  			      navigator.geolocation.getCurrentPosition(
+    						function(position) {
+    							transitionToMaps([position.coords.latitude, position.coords.longitude]);
+    						}, 
+    						function(error){
+    							console.log("Geolocation Error: " + error.code + ": " + error.message);
+    							$('#instructions p').text("There was an error in getting your current location, so let's start in Berkeley...");
+    							window.setTimeout(transitionToMaps, 700, startingCenter);
+    						}
+    					);
+    				}
+    				break;
+    			case "Text":
+    			default:
+    			  $('#instructions').show();
+    			  $('body').addClass('with-image');
+    			  $('#base').hide();
+    			  $('#map').hide();
+    			  break;
+			  }
 			});
 
 			function transitionToMaps(startingCenter) {
+			  $('#map').show();
+			  $('#base').show();
 				displayMaps(dpiGuess, startingCenter);
 				$('#instructions').hide();
 				$('body').removeClass('with-image');
@@ -181,55 +200,62 @@
 				var targetZoom = Math.log(screenDpi * 39.37 * 156543.034 * Math.cos(latitude * Math.PI / 180)) / Math.log(2);
 
 				console.log('zoom: ' + targetZoom);
+				
+				if (!window.mapsCreated) {
+				  var map = L.map('map', {
+  					maxZoom: 31, 
+  					attributionControl: false, 
+  					zoomControl: false, 
+  					scrollWheelZoom: false, 
+  					doubleClickZoom: false, 
+  					boxZoom: false, 
+  					keyboardZoomOffset: 0,
+  					panControl: false
+  				}).setView(startingCenter, targetZoom);
+  				window.map = map;	// useful for debugging
+  				var buildingLayer = L.geoJson(null, {
+  					onEachFeature: function(feature, layer){
+  					}
+  				}).addTo(map);
+  				var landLayer = L.geoJson(null, {
+  					onEachFeature: function(feature, layer){
+  						var message = feature.properties.name ? feature.properties.name + ', ' : '';
+  						message = message + 'a ' + feature.properties.kind;
+  						layer.bindPopup(message);
+  					}
+  				}).addTo(map);
+  				var roadLayer = L.geoJson(null, {
+  					onEachFeature: function(feature, layer){
+  						layer.bindPopup('An unnamed ' + feature.properties.kind + '.');
+  					}
+  				}).addTo(map);
 
-				var map = L.map('map', {
-					maxZoom: 31, 
-					attributionControl: false, 
-					zoomControl: false, 
-					scrollWheelZoom: false, 
-					doubleClickZoom: false, 
-					boxZoom: false, 
-					keyboardZoomOffset: 0,
-					panControl: false
-				}).setView(startingCenter, targetZoom);
-				window.map = map;	// useful for debugging
-				var buildingLayer = L.geoJson(null, {
-					onEachFeature: function(feature, layer){
-					}
-				}).addTo(map);
-				var landLayer = L.geoJson(null, {
-					onEachFeature: function(feature, layer){
-						var message = feature.properties.name ? feature.properties.name + ', ' : '';
-						message = message + 'a ' + feature.properties.kind;
-						layer.bindPopup(message);
-					}
-				}).addTo(map);
-				var roadLayer = L.geoJson(null, {
-					onEachFeature: function(feature, layer){
-						layer.bindPopup('An unnamed ' + feature.properties.kind + '.');
-					}
-				}).addTo(map);
+  				var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
+  				attribution.addAttribution('Prose by Jorge Luis Borges');
+  				attribution.addAttribution('English translation by Andrew Hurley');
+  				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
+  				attribution.addAttribution('map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
+  				var scale = L.control.scale({metric: false, position: 'bottomleft'}).addTo(map);
+  				var pan = L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
+  				window.controls = [attribution, scale, pan];
 
-				var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
-				attribution.addAttribution('Prose by Jorge Luis Borges');
-				attribution.addAttribution('English translation by Andrew Hurley');
-				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
-				attribution.addAttribution('map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
-				var scale = L.control.scale({metric: false, position: 'bottomleft'}).addTo(map);
-				var pan = L.control.pan({panOffset: window.screen.width, position: 'topright'}).addTo(map);
-				window.controls = [attribution, scale, pan];
-
-				var basemap = L.map('base', {
-					attributionControl: false, 
-					zoomControl: false,
-					scrollWheelZoom: false, 
-					doubleClickZoom: false, 
-					boxZoom: false, 
-					keyboardZoomOffset: 0,
-					panControl: false
-				}).setView(startingCenter, 18);
-				var layer = new L.StamenTileLayer("terrain");
-				basemap.addLayer(layer);
+  				var basemap = L.map('base', {
+  					attributionControl: false, 
+  					zoomControl: false,
+  					scrollWheelZoom: false, 
+  					doubleClickZoom: false, 
+  					boxZoom: false, 
+  					keyboardZoomOffset: 0,
+  					panControl: false
+  				}).setView(startingCenter, 18);
+  				window.basemap = basemap;
+  				var layer = new L.StamenTileLayer("terrain");
+  				basemap.addLayer(layer);
+  				window.mapsCreated = true;
+				} else {
+				  var map = window.map;
+				  var basemap = window.basemap;
+				}
 
 				var bounds = map.getBounds();
 				var boundsPadding = 20;
@@ -344,6 +370,8 @@
 				  $('#help').fadeToggle(300);
 				}
 			});
+			
+			$(window).trigger("hashchange");
 		});
 	</script>
 	<title>On Exactitude in Science</title>
@@ -356,7 +384,7 @@
 		<p style="text-align: right; margin-top: -20px;">
 			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
 		</p>
-		<p class="explore">Explore the tattered ruins of that map in your <a href="#" id="currentLocation">current location</a>, or start <a href="#" id="berkeleyLocation">in Berkeley</a>.</p>
+		<p class="explore">Explore the tattered ruins of that map in your <a href="#Current" id="currentLocation">current location</a>, or start <a href="#Berkeley" id="berkeleyLocation">in Berkeley</a>.</p>
 		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library.</p>
 	</div>
 	<div id="help" style="display: none;">
