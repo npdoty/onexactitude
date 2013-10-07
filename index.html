@@ -93,6 +93,15 @@
 		  margin-bottom: 0px;
 		}
 		
+		#help {
+		  background-color: black;
+		  color: white;
+		  opacity: 0.8;
+		  position: fixed;
+		  bottom: 0; right: 0;
+		  z-index: 99 !important;
+		  padding: 20px;
+		}
 	</style>
 	<script type="text/javascript" charset="utf-8">
 		// tile methods provided by: http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
@@ -331,6 +340,8 @@
 					window.visibleControls = !window.visibleControls;
 				} else if (event.which == 98) {
 				  $('#base').fadeToggle(1000);
+				} else if (event.which == 63) {
+				  $('#help').fadeToggle(300);
 				}
 			});
 		});
@@ -347,5 +358,10 @@
 		</p>
 		<p class="explore">Explore the tattered ruins of that map in your <a href="#" id="currentLocation">current location</a>, or start <a href="#" id="berkeleyLocation">in Berkeley</a>.</p>
 		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library.</p>
+	</div>
+	<div id="help" style="display: none;">
+	  <strong>?</strong>: help<br>
+	  <strong>h</strong>: toggle controls<br>
+	  <strong>b</strong>: toggle base map
 	</div>
 </body>
