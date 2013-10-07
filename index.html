@@ -137,6 +137,14 @@
 		
 		metersPerDegree = 111111;  // this hard-coded number is not a joke, apparently it's a good approximation
 	
+	  function useHashChangeForFragments() {
+	    $('body').delegate('a [href^=#]', 'click', function(event) {
+			 var href = $(this).attr("href");
+			 $.bbq.pushState({url: href});
+			 return false;
+			});
+	  }
+	
 		$(function() {
 			var dpiGuess = dpi();
 			console.log('dpi based on matchMedia queries: ' + dpiGuess);
@@ -148,11 +156,7 @@
 				transitionToMaps(startingCenter);	// geolocation not supported, so just use the default
 			}
 			
-			$('a [href^=#]').click(function(event) {
-			 var href = $(this).attr("href");
-			 $.bbq.pushState({url: href});
-			 return false;
-			});
+			useHashChangeForFragments();
 			
 			$(window).bind("hashchange", function(e) {
 			  var fragment = $.param.fragment();
@@ -231,7 +235,7 @@
   				}).addTo(map);
 
   				var attribution = L.control.attribution({position: 'topleft'}).addTo(map);
-  				attribution.addAttribution('Prose by Jorge Luis Borges');
+  				attribution.addAttribution('<a href="#Text">Prose</a> by Jorge Luis Borges');
   				attribution.addAttribution('English translation by Andrew Hurley');
   				attribution.addAttribution('<a href="http://webadaptation.org">Web adaptation</a> by <a href="http://npdoty.name">Nick Doty</a>')
   				attribution.addAttribution('map base tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>, map data by <a href="http://openstreetmap.org">OpenStreetMap</a> (using <a href="http://openstreetmap.us/~migurski/vector-datasource/">vector tiles</a> provided by Mike Migurski), under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.');
