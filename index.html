@@ -85,6 +85,15 @@
 		#instructions p.explore {
 		  font-style: normal;
 		}
+		#instructions p.intro {
+		  font-style: normal;
+		  margin-bottom: -40px;
+		}
+		#instructions p.citation {
+		  text-align: right; 
+		  margin-top: -20px; 
+		  margin-bottom: -20px;
+		}
 		
 		#instructions p.credits {
 		  font-size: 50%;
@@ -255,6 +264,7 @@
   				window.basemap = basemap;
   				var layer = new L.StamenTileLayer("terrain");
   				basemap.addLayer(layer);
+  				
   				window.mapsCreated = true;
 				} else {
 				  var map = window.map;
@@ -301,10 +311,10 @@
 						layer: roadLayer, 
 						style: {"color": "#ff0000", "opacity": 0.3, "fillOpacity": 0.3},
 						bufferForItem: function(feature) {
-						  var widths = {
+						  var widths = {  // approximate widths of different road features, in meters
 						    'path' : 1,
-						    'minor_road' : 3,
-						    'major_road' : 5
+						    'minor_road' : 4,
+						    'major_road' : 8
 						  }
 						  
 						  return widths[feature['properties']['kind']] || 2;
@@ -384,12 +394,15 @@
 	<div id="base"></div>
 	<div id="map"></div>
 	<div id="instructions">
+	  <p class="intro">
+	    Cited by Jorge Luis Borges, 1946:
+	  </p>
 	  <p>In that Empire, the Art of Cartography attained such Perfection that the map of a single Province occupied the entirety of a City, and the map of the Empire, the entirety of a Province. In time, those Unconscionable Maps no longer satisfied, and the Cartographers Guilds struck a Map of the Empire whose size was that of the Empire, and which coincided point for point with it. The following Generations, who were not so fond of the Study of Cartography as their Forebears had been, saw that that vast Map was Useless, and not without some Pitilessness was it, that they delivered it up to the Inclemencies of Sun and Winters. In the Deserts of the West, still today, there are Tattered Ruins of that Map, inhabited by Animals and Beggars; in all the Land there is no other Relic of the Disciplines of Geography.</p>
-		<p style="text-align: right; margin-top: -20px;">
+		<p class="citation">
 			&mdash;Suárez Miranda, <span class="title">Viajes de varones prudentes</span>, Libro IV, Cap. XLV, Lérida, 1658
 		</p>
 		<p class="explore">Explore the tattered ruins of that map in your <a href="#Current" id="currentLocation">current location</a>, or start <a href="#Berkeley" id="berkeleyLocation">in Berkeley</a>.</p>
-		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library. <a href="submission.html">Submitted</a> to the <a href="http://globalurbanhumanities.berkeley.edu/">Global Urban Humanities Initiative</a>, UC Berkeley, <a href="http://ced.berkeley.edu/events-media/events/mapping-and-its-discontents">Mapping and Its Discontents Symposium</a>, November 2013.</p>
+		<p class="credits">Map reproduction courtesy of the <a href="http://maps.bpl.org/id/10025">Norman B. Leventhal Map Center</a> at the Boston Public Library.<br><a href="submission.html">Submitted</a> to the <a href="http://globalurbanhumanities.berkeley.edu/">Global Urban Humanities Initiative</a>, UC Berkeley, <a href="http://ced.berkeley.edu/events-media/events/mapping-and-its-discontents">Mapping and Its Discontents Symposium</a>, November 2013.</p>
 	</div>
 	<div id="help" style="display: none;">
 	  <strong>?</strong>: help<br>
