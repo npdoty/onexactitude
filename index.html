@@ -2,14 +2,14 @@
 <head>
 	<meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<script src="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.js"></script>
-	<script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.3"></script>
+	<script src="lib/leaflet-0.6.4/leaflet.js"></script>
+	<script type="text/javascript" src="lib/tile.stamen.js"></script>
 	<script src="lib/L.Control.Pan.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/javascript.util.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jsts.js" type="text/javascript" charset="utf-8"></script>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
 	<script src="lib/jquery.ba-bbq.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.4/leaflet.css" >
+	<link rel="stylesheet" href="lib/leaflet-0.6.4/leaflet.css" >
 	<link rel="stylesheet" href="lib/L.Control.Pan.css" type="text/css" media="screen,all,braille,embossed,handheld,print,projection,speech,tty,tv|" charset="utf-8">
 	<link href='http://fonts.googleapis.com/css?family=IM+Fell+Double+Pica:400,400italic|Cardo:400,400italic' rel='stylesheet' type='text/css'>
 	<style type="text/css" media="screen">
@@ -306,7 +306,7 @@
 
 				var vectorTileTemplates = [
 					{
-						template: "http://tile.openstreetmap.us/vectiles-highroad/", 
+						template: "https://https2http.appspot.com/vectiles-highroad/", 
 						fetchZoom: 17, 
 						layer: roadLayer, 
 						style: {"color": "#ff0000", "opacity": 0.3, "fillOpacity": 0.3},
@@ -321,13 +321,13 @@
 						}
 					}, 
 					{
-						template: "http://tile.openstreetmap.us/vectiles-buildings/", 
+						template: "https://https2http.appspot.com/vectiles-buildings/", 
 						fetchZoom: 18, 
 						layer: buildingLayer, 
 						style: {"color": "#0000ff"}
 					}, 
 					{
-						template: "http://tile.openstreetmap.us/vectiles-land-usages/", 
+						template: "https://https2http.appspot.com/vectiles-land-usages/", 
 						fetchZoom: 14, 
 						layer: landLayer, 
 						style: {"color": "#00ff00", "fillOpacity": 0.1}
